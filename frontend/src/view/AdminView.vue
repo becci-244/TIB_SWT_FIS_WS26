@@ -10,10 +10,24 @@ import AppointmentEdit from '/src/components/AppointmentEdit.vue'
 import AppointmentCreate from '/src/components/AppointmentCreate.vue'
 
 // ============================================
+// Events
+// ============================================
+
+const emit = defineEmits(['logout'])
+
+// ============================================
 // Aktuelle Ansicht verwalten
 // ============================================
 
 const currentView = ref('dashboard')
+
+// ============================================
+// Logout
+// ============================================
+
+function logout() {
+  emit('logout')
+}
 
 // ============================================
 // Dashboard -> Edit
@@ -44,25 +58,29 @@ function backToDashboard() {
 
   <div class="admin-container">
 
-    <h1>Tageübersicht gefiltert nach Studiengänge (Admin)</h1>
-
     <!-- Dashboard -->
+
     <AdminDashboard
       v-if="currentView === 'dashboard'"
       @open-edit="openAppointmentEdit"
       @open-create="openAppointmentCreate"
+      @logout="logout"
     />
 
     <!-- EditView -->
+
     <AppointmentEdit
       v-if="currentView === 'edit'"
       @close-edit="backToDashboard"
+      @logout="logout"
     />
 
     <!-- CreateView -->
+
     <AppointmentCreate
-      v-if="currentView === 'create'"
-      @close-create="backToDashboard"
+    v-if="currentView === 'create'"
+    @close-create="backToDashboard"
+    @logout="logout"
     />
 
   </div>
@@ -70,7 +88,9 @@ function backToDashboard() {
 </template>
 
 <style scoped>
+
 .admin-container{
   padding:20px;
 }
+
 </style>

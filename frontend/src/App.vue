@@ -1,34 +1,67 @@
 <script setup>
 
+import { ref } from 'vue'
+
 // ============================================
 // JavaScript Block: Einbinden von Viewseiten
 // ============================================
 
 import LoginView from './view/LoginView.vue'
 import AdminView from './view/AdminView.vue'
+import LecturerView from './view/LecturerView.vue'
+import UserView from './view/UserView.vue'
+
+// ============================================
+// Aktuelle Ansicht
+// ============================================
+
+const currentView = ref('login')
+
+// ============================================
+// Wechsel zwischen den Ansichten
+// ============================================
+
+function changeView(role) {
+  console.log("Rolle empfangen:", role)
+
+  currentView.value = role
+}
+
+function logout() {
+  currentView.value = 'login'
+}
 
 </script>
 
 <template>
 
-  <!-- Testbereich -->
-  <h1>You did it! Das ist nun deine Anzeigeseite :3</h1>
+  <!-- Login -->
 
-  <p>
-    Visit
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">
-      vuejs.org
-    </a>
-    to read the documentation
-  </p>
+  <LoginView
+    v-if="currentView === 'login'"
+    @login="changeView"
+  />
 
-  <!-- ============================================ -->
-  <!-- Hier werden später andere Views eingebunden -->
-  <!-- ============================================ -->
+  <!-- User -->
 
-  <LoginView />
-  <AdminView />
+  <UserView
+    v-if="currentView === 'user'"
+    @logout="logout"
+  />
 
+  <!-- Dozent -->
+
+  <LecturerView
+    v-if="currentView === 'lecturer'"
+    @logout="logout"
+  />
+
+  <!-- Admin -->
+
+  <AdminView
+  v-if="currentView === 'admin'"
+  @logout="logout"
+  />
 
 </template>
 

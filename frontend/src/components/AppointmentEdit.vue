@@ -1,64 +1,85 @@
 <script setup>
+import { ref } from 'vue'
 
-const emit = defineEmits(['close-edit'])
+// ============================================
+// Komponenten einbinden
+// ============================================
 
+import AdminDashboard from '/src/components/AdminDashboard.vue'
+import AppointmentEdit from '/src/components/AppointmentEdit.vue'
+import AppointmentCreate from '/src/components/AppointmentCreate.vue'
+
+// ============================================
+// Events
+// ============================================
+
+const emit = defineEmits(['logout'])
+
+// ============================================
+// Aktuelle Ansicht verwalten
+// ============================================
+
+const currentView = ref('dashboard')
+
+// ============================================
+// Logout
+// ============================================
+
+function logout() {
+  emit('logout')
+}
+
+// ============================================
+// Dashboard -> Edit
+// ============================================
+
+function openAppointmentEdit() {
+  currentView.value = 'edit'
+}
+
+// ============================================
+// Dashboard -> Create
+// ============================================
+
+function openAppointmentCreate() {
+  currentView.value = 'create'
+}
+
+// ============================================
+// Zurück zum Dashboard
+// ============================================
+
+function backToDashboard() {
+  currentView.value = 'dashboard'
+}
 </script>
 
 <template>
 
-  <div class="edit-container">
+  <div class="admin-container">
 
-    <h2>Verwaltung von Termine (Admin)</h2>
+    <!-- Dashboard -->
 
-    <h3>Studiengang: XY</h3>
+    <AdminDashboard
+      v-if="currentView === 'dashboard'"
+      @open-edit="openAppointmentEdit"
+      @open-create="openAppointmentCreate"
+      @logout="logout"
+    />
 
-    <div class="edit-card">
+    <!-- EditView -->
 
-      <h2>Termin 1</h2>
+    <AppointmentEdit
+      v-if="currentView === 'edit'"
+      @close-edit="backToDashboard"
+    />
 
-      <div class="row">
-        <span>Raum: A101</span>
-        <button>Bearbeiten</button>
-      </div>
+    <!-- CreateView -->
 
-      <div class="row">
-        <span>9:45 - 13:00</span>
-        <button>Bearbeiten</button>
-      </div>
-
-      <div class="row">
-        <span>Dozent: Hr./Fr Mustermann</span>
-        <button>Bearbeiten</button>
-      </div>
-
-      <div class="row">
-        <span>Status: Entfall/Geplant</span>
-        <button>Bearbeiten</button>
-      </div>
-
-      <div class="row">
-        <span>Event: von - bis</span>
-        <button>Bearbeiten</button>
-      </div>
-
-      <div class="warning-text">
-        Diesen Termin absagen?
-        Andere Termine bleiben unverändert
-      </div>
-
-      <div class="button-row">
-
-        <button @click="emit('close-edit')">
-          Abbrechen
-        </button>
-
-        <button class="cancel-button">
-          Termin absagen
-        </button>
-
-      </div>
-
-    </div>
+    <AppointmentCreate
+      v-if="currentView === 'create'"
+      @close-create="backToDashboard"
+    />
 
   </div>
 
@@ -66,36 +87,8 @@ const emit = defineEmits(['close-edit'])
 
 <style scoped>
 
-.edit-container{
+.admin-container{
   padding:20px;
-}
-
-.edit-card{
-  max-width:700px;
-  padding:30px;
-  border:1px solid gray;
-  border-radius:40px;
-}
-
-.row{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  margin-bottom:15px;
-}
-
-.warning-text{
-  margin-top:40px;
-  margin-bottom:30px;
-}
-
-.button-row{
-  display:flex;
-  gap:20px;
-}
-
-.cancel-button{
-  background-color:#f0d0d0;
 }
 
 </style>

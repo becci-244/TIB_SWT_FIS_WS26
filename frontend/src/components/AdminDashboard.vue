@@ -1,10 +1,14 @@
 <script setup>
 
+import { ref, onMounted } from 'vue'
+
 const emit = defineEmits([
   'open-edit',
   'open-create',
   'logout'
 ])
+
+const appointments = ref([])
 
 function openEdit() {
   emit('open-edit')
@@ -17,6 +21,32 @@ function openCreate() {
 function logout() {
   emit('logout')
 }
+
+async function loadAppointments() {
+
+  try {
+
+    const response = await fetch(
+      'http://localhost:3000/api/v1/appointments'
+    )
+
+    appointments.value =
+      await response.json()
+
+  } catch (error) {
+
+    console.error(
+      "Fehler beim Laden der Termine:",
+      error
+    )
+
+  }
+
+}
+
+onMounted(() => {
+  loadAppointments()
+})
 
 </script>
 
@@ -66,73 +96,44 @@ function logout() {
 
     <div
       class="card"
+      v-for="appointment in appointments"
+      :key="appointment.id"
       @dblclick="openEdit"
     >
 
-      <h3>Termin 1</h3>
-
-      <p>Raum: F01.204</p>
-
-      <p>09:45 - 13:00 Uhr</p>
-
-      <p>Dozent: Hr./Fr. Mustermann</p>
+      <h3>{{ appointment.title }}</h3>
 
       <p>
-        Status:
-        <span class="status-planned">
-          Geplant
-        </span>
+        Raum:
+        {{ appointment.room }}
       </p>
-
-      <p>Event: 2026-11-11</p>
-
-    </div>
-
-    <div
-      class="card"
-      @dblclick="openEdit"
-    >
-
-      <h3>Termin 2</h3>
-
-      <p>Raum: F02.204</p>
-
-      <p>14:00 - 17:00 Uhr</p>
-
-      <p>Dozent: Hr./Fr. Mustermann</p>
 
       <p>
-        Status:
-        <span class="status-planned">
-          Geplant
-        </span>
+        {{ appointment.start }}
+        -
+        {{ appointment.end }}
+        Uhr
       </p>
-
-      <p>Event: 2026-11-11</p>
-
-    </div>
-
-    <div
-      class="card"
-      @dblclick="openEdit"
-    >
-
-      <h3>Termin 3</h3>
-
-      <p>Raum: F01.022</p>
-
-      <p>08:00 - 11:15 Uhr</p>
-
-      <p>Dozent: Hr./Fr. Mustermann</p>
 
       <p>
-        Status:
-        <span class="status-planned">
-          Geplant
-        </span>
+        Dozent:
+        {{ appointment.lecturer }}
       </p>
 
-      <p>Event: 2026-11-11</p>
+      <p>
+
+        Status:
+
+        <span class="status-planned">
+          {{ appointment.status }}
+        </span>
+
+      </p>
+
+      <p>
+        Event:
+        {{ appointment.date }}
+      </p>
 
     </div>
 
